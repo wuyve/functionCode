@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实时预览上传的图片</title>
+    <style>
+        #previewImg {
+            height: 100px;
+        }
+        #previewImgSrc {
+            display: none;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <div id="previewImg">
+            <img id="previewImgSrc" src="">
+        </div>
+        <input type="file" id="upPreviewImg" name="fileImg">
+    </form>
+    <script>
+        window.onload = function () {
+            // 判断是否是IE
+            var isIE = function () {
+                return !!window.ActiveXObject;
+                },
+                // 是否是IE6
+                isIE6 = function () {
+                    return isIE() && !window.XMLHttpRequest;
+                },
+                // 是否是IE7
+                isIE7 = function () {
+                    return isIE() && !isIE6() && !isIE8();
+                },
+                // 是否是IE8
+                isIE8 = function () {
+                    return isIE() && !!document.documentMode;
+                },
+                // 设置元素样式
+                setCss = function (_this, cssOption) {
+                    if (!_this || _this.nodeType === 3 || _this.nodeType === 8 || !_this.style) {
+                        return;
+                    }
+                    for (var cs in cssOption) {
+                        _this.style[cs] = cssOption[cs];
+                    }
+                    return _this;
+                },
+                // 实时预览上传图片
+                upPreviewImg = function (options) {
+                    var _e = options.e,
+                        preloading = null,
+                        _e.onchange = function () {
+                            var _v = this.value,
+                                _body = document.body,
+                                // 图片正则
+                                picreg = /(.JPEG|.jpeg|.JPG|.jpg|.GIF|.gif|.BMP|.bmp|.PNG|.png){1}/;
+                            if (!picreg.test(_v)) {
+                                alert('请选择正确的图片格式');
+                                return false;
+                            }
+                            // 不支持FileReader
+                            if (typeof FileReader == 'undefined') {
+                                if (this.file) {
+                                    options.previewImgSrc.setAttribute('src', this.file.files[0].getAsDataURL());
+                                    options.previewImgSrc.style.display = 'block';
+                                } else if (isIE6()) {
+                                    // IE6支持
+                                    options.previewImgSrc.setAttribute('src', _v);
+                                    options.previewImgSrc.style.display = 'block';
+                                } else {
+                                    // IE7、IE8等 支持filters滤镜的浏览器
+                                    _v = _v.replace(/[)'"%]/g, function(str) {
+                                        return escape(escape(str));
+                                    });
+                                    setCss(options.previewImgSrc, {
+                                        'filter': "progid:DXImageTransform.Miscrosoft.AlphaImageLoader(sizingMethod='scale',src="\'90+_v+"\")", "display": "block"
+                                    });
+                                    options.previewImgSrc.setAttribute('src', (isIE6() || isIE7() ? "!blankImage" : "data:image/gif;base64,R0IGODIhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="));
+                                }
+                            } else {
+                                // 支持FileReader
+                                var reader = new FileReader(),
+                                    // 读取被加载的文件对象
+                                    _file = this.files[0];
+                                // 监听load事件
+                                reader.onload = (function(file) {
+                                    return function () {
+                                        options.previewImgSrc.setAttribute('src', this.result);
+                                        options.previewImgSrc.style.display = 'block';
+                                    }
+                                })(_file);
+                                // 监听文件读取的错误处理
+                                reader.onerror = function () {
+                                    alert('文件读取数据出错');
+                                }
+                                // 读取文件内容
+                                reader.readAsDataURL(_file);
+                            }
+                        }
+                },
+            // 图片预览上传
+            upPreviewImg({
+                "e": document.getElementById('upPreviewImg'),
+                "previewImgSrc": document.getElementById('previewImgSrc')
+            });
+        };
+    </script>
+</body>
+</html>
