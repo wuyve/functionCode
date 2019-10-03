@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>photoPlay</title>
+    <title>横向图片轮播</title>
+    <link rel="stylesheet" href="./css/photoPlay.css">
 </head>
 <body>
-    
+    <div class="horizontalShuffling">
+        <ul id="horizontalShuffling">
+            <li><img src="./image/hanhan.jpg"></li>
+            <li><img src="./image/hanhan1.jpg"></li>
+            <li><img src="./image/hanhan2.jpg"></li>
+            <li><img src="./image/hanhan3.jpg"></li>
+            <li><img src="./image/hanhan4.jpg"></li>
+        </ul>
+    </div>
+    <div id="horizontalShufflingBtn">
+        <input id="horizontalShufflingBtnLeft" type="button" value="左滚动">
+        <input id="horizontalShufflingBtnRight" type="button" value="右滚动">
+    </div>
+    <script src="./js/photoPlay.js"></script>
 </body>
 </html>
